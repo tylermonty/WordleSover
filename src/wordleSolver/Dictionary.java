@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -21,6 +22,8 @@ public class Dictionary {
 	//longest word in dictionary
 	private int maxLength = 0;
 	private String legalAlphabet = "abcdefghijklmnopqrstuvwxyz";
+	//Used to Record Scores of all words
+	private ArrayList<WordScore> wordScores = new ArrayList<WordScore>();
 	
 	public String getAlphabet() {
 		return legalAlphabet;
@@ -41,14 +44,11 @@ public class Dictionary {
 		return sortedFreq;
 	}
 	
-	//constructor (filename only)
-	public Dictionary(String dictionary_file_name) {
-		new Dictionary(null, dictionary_file_name);
-	}
 	//full path constructor
-	public Dictionary(String dictionary_directory_path, String dictionary_file_name) {
+	public Dictionary(String dictionary_file_name) {
 		try {
-			File full_dictionary = new File(dictionary_directory_path, dictionary_file_name);
+			String cwd = System.getProperty("user.dir");
+			File full_dictionary = new File(cwd + "/inputs/", dictionary_file_name);
 			Scanner reader = new Scanner(full_dictionary);
 			
 			
@@ -83,8 +83,11 @@ public class Dictionary {
 			char c = (char) ((char) i+97);
 			sortedFreq.add(new CharacterFreq(c, freq));
 		}
+		
 		//sort based on highest frequency
 		Collections.sort(sortedFreq, Collections.reverseOrder());
+		
+		optimalFirstWord(sortedFreq, dictionary);
 	}
 	
 	//add words to length indexed ArrayList
@@ -115,5 +118,32 @@ public class Dictionary {
 			int index = (int) (word.charAt(i)-97);
 			letterCounts[index]++;
 		}
+	}
+	
+	//calculate most optimal first word based on wordle game
+	private void optimalFirstWord(ArrayList<CharacterFreq> letterFreqs, ArrayList<String> dictionary) {
+		for (String word: dictionary) {
+			ArrayList<Character> lettersInWord = new ArrayList<Character>();
+			float score = 0;
+			for (char c : word.toCharArray()) {
+				lettersInWord.add(c);
+			}
+			HashSet<Character> lettersSet = new HashSet<Character>(lettersInWord);
+			lettersInWord.clear();
+			lettersInWord.addAll(lettersSet);
+			
+			//Calculate score
+			for (char letter : lettersInWord) {
+				for (CharacterFreq c : letterFreqs) {
+					if (c.getCharacter() == letter) {
+						score += c.getFrequency();
+						break;
+					}
+				}
+			}
+			wordScores.add(new WordScore(word, score));
+		}
+		Collections.sort(wordScores);
+		System.out.println(wordScores.toString());
 	}
 }

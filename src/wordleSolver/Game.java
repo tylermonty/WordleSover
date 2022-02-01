@@ -30,8 +30,8 @@ public class Game {
 	}
 	
 	//Default Wordle Game Constructor
-	public Game(String dictFilePath, String dictFileName, gameType type) {
-		this.dictionary = new Dictionary(dictFilePath, dictFileName);
+	public Game(String dictFileName, gameType type) {
+		this.dictionary = new Dictionary(dictFileName);
 		ArrayList<ArrayList<String>> dict = dictionary.getDictionary();
 		
 		this.wordLength = 5;
@@ -41,8 +41,8 @@ public class Game {
 	}
 	
 	//Generalized game constructor
-	public Game(String dictFilePath, String dictFileName, int wordLength, int attempts, gameType type) {
-		this.dictionary = new Dictionary(dictFilePath, dictFileName);
+	public Game(String dictFileName, int wordLength, int attempts, gameType type) {
+		this.dictionary = new Dictionary(dictFileName);
 		ArrayList<ArrayList<String>> dict = dictionary.getDictionary();
 		
 		this.wordLength= wordLength;
